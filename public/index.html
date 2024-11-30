@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LootLink Bypasser</title>
+</head>
+<body>
+    <h1>LootLink Bypasser</h1>
+    <input type="text" id="lootLink" placeholder="Enter LootLink URL">
+    <button onclick="handleBypass()">Bypass</button>
+    <div id="result"></div>
+
+    <script>
+        async function handleBypass() {
+            const lootLink = document.getElementById("lootLink").value;
+            const resultDiv = document.getElementById("result");
+
+            if (!lootLink) {
+                resultDiv.textContent = "Please enter a valid URL.";
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/bypass", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ urlToBypass: lootLink }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <p><strong>TID:</strong> ${data.TID}</p>
+                        <p><strong>KEY:</strong> ${data.KEY}</p>
+                        <p><strong>CDN Domain:</strong> ${data.CDN_DOMAIN}</p>
+                    `;
+                } else {
+                    resultDiv.textContent = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                console.error(error);
+                resultDiv.textContent = "An error occurred. Please try again.";
+            }
+        }
+    </script>
+</body>
+</html>
